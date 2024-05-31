@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	addr = flag.String("addr", "localhost:50051", "the address to connect to")
+	addr = flag.String("addr", "server:50051", "the address to connect to")
 )
 
 func main() {
@@ -25,11 +25,16 @@ func main() {
 	defer conn.Close()
 	c := pb.NewDummyServiceClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	_, err = c.DoSomething(ctx, &pb.DoSomethingRequest{})
-	if err != nil {
-		log.Fatalf("could not do something: %v", err)
-	}
-	log.Printf("Did something")
+    ticker := time.NewTicker(5 * time.Second)
+    defer ticker.Stop()
+    ctx := context.Background()
+    for {
+        <-ticker.C
+
+        _, err = c.DoSomething(ctx, &pb.DoSomethingRequest{})
+        if err != nil {
+            log.Fatalf("could not do something: %v", err)
+        }
+        log.Printf("did something")
+    }
 }

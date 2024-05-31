@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  client:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    restart: on-failure:3
+    depends_on:
+      - server
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    ports:
+      - "50051:50051"

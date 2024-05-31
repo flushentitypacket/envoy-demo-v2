@@ -11,6 +11,4 @@ COPY . ./
 
 RUN go build -o /client ./apps/client
 
-EXPOSE 50051
-
 CMD ["/client"]
