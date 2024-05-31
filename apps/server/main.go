@@ -10,6 +10,8 @@ import (
 
 	"dummy-grpc/apps/server/service"
 	pb "dummy-grpc/lib/proto/dummy"
+
+	"google.golang.org/grpc/reflection"
 )
 
 var (
@@ -25,8 +27,10 @@ func main() {
 
 	s := grpc.NewServer()
 	pb.RegisterDummyServiceServer(s, &service.Service{})
-	log.Printf("server listening at %v", lis.Addr())
 
+	reflection.Register(s)
+
+	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
