@@ -7,9 +7,9 @@ import (
 	"log"
 	"net"
 
-	pb "dummy-grpc/lib/proto/dummy"
-
 	"google.golang.org/grpc"
+
+	pb "dummy-grpc/lib/proto/dummy"
 )
 
 var (
