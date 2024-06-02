@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -17,6 +18,11 @@ var (
 
 func main() {
 	flag.Parse()
+
+    statsdClient, err := statsd.New("dogstatsd:8125", statsd.WithNamespace("client"))
+    if err != nil {
+        log.Fatalf("failed to create statsd client: %v", err)
+    }
 
 	conn, err := grpc.NewClient(
         *addr,
@@ -40,5 +46,6 @@ func main() {
 			log.Fatalf("could not do something: %v", err)
 		}
 		log.Printf("did something")
+        statsdClient.Count("request", 1, []string{}, 1.0)
 	}
 }

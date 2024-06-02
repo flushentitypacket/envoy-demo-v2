@@ -17,3 +17,7 @@ services:
     #   - "50051:50051"
     deploy:
       replicas: 2
+  dogstatsd:
+    image: datadog/dogstatsd:latest
+    env_file:
+      - .env
