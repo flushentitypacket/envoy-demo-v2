@@ -18,23 +18,27 @@ var (
 func main() {
 	flag.Parse()
 
-	conn, err := grpc.NewClient(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(
+        *addr,
+        grpc.WithTransportCredentials(insecure.NewCredentials()),
+        grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "round_robin": {} } ]}`),
+    )
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewDummyServiceClient(conn)
 
-    ticker := time.NewTicker(5 * time.Second)
-    defer ticker.Stop()
-    ctx := context.Background()
-    for {
-        <-ticker.C
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+	ctx := context.Background()
+	for {
+		<-ticker.C
 
-        _, err = c.DoSomething(ctx, &pb.DoSomethingRequest{})
-        if err != nil {
-            log.Fatalf("could not do something: %v", err)
-        }
-        log.Printf("did something")
-    }
+		_, err = c.DoSomething(ctx, &pb.DoSomethingRequest{})
+		if err != nil {
+			log.Fatalf("could not do something: %v", err)
+		}
+		log.Printf("did something")
+	}
 }

@@ -7,9 +7,13 @@ services:
     restart: on-failure:3
     depends_on:
       - server
+    deploy:
+      replicas: 1
   server:
     build:
       context: .
       dockerfile: apps/server/Dockerfile
-    ports:
-      - "50051:50051"
+    # ports:
+    #   - "50051:50051"
+    deploy:
+      replicas: 2
