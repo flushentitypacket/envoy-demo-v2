@@ -1,16 +1,16 @@
 package main
 
 import (
+	"dummy-grpc/apps/server/service"
+	"dummy-grpc/lib/grpc_stats"
+	pb "dummy-grpc/lib/proto/dummy"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"google.golang.org/grpc"
-
-	"dummy-grpc/apps/server/service"
-	pb "dummy-grpc/lib/proto/dummy"
-
 	"google.golang.org/grpc/reflection"
 )
 
@@ -25,7 +25,14 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+    statsdClient, err := statsd.New("dogstatsd:8125", statsd.WithNamespace("ron.demo"))
+    if err != nil {
+        log.Fatalf("failed to create statsd client: %v", err)
+    }
+
+	s := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(grpc_stats.UnaryServerInterceptor(statsdClient)),
+	)
 	pb.RegisterDummyServiceServer(s, &service.Service{})
 
 	reflection.Register(s)

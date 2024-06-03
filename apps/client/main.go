@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"dummy-grpc/lib/grpc_stats"
 	pb "dummy-grpc/lib/proto/dummy"
 	"flag"
 	"log"
@@ -19,7 +20,7 @@ var (
 func main() {
 	flag.Parse()
 
-    statsdClient, err := statsd.New("dogstatsd:8125", statsd.WithNamespace("client"))
+    statsdClient, err := statsd.New("dogstatsd:8125", statsd.WithNamespace("ron.demo"))
     if err != nil {
         log.Fatalf("failed to create statsd client: %v", err)
     }
@@ -28,6 +29,7 @@ func main() {
         *addr,
         grpc.WithTransportCredentials(insecure.NewCredentials()),
         grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "round_robin": {} } ]}`),
+        grpc.WithChainUnaryInterceptor(grpc_stats.UnaryClientInterceptor(statsdClient)),
     )
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
