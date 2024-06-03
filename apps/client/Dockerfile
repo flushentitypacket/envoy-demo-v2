@@ -11,4 +11,4 @@ COPY . ./
 
 RUN go build -o /client ./apps/client
 
-CMD ["/client"]
+ENTRYPOINT [ "/client" ]

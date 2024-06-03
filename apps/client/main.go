@@ -17,6 +17,7 @@ import (
 
 var (
 	addr = flag.String("addr", "server:50051", "the address to connect to")
+    requestsPerSecond = flag.Float64("requests_per_second", 1.0, "the number of requests per second")
 )
 
 func main() {
@@ -45,7 +46,9 @@ func main() {
 	defer conn.Close()
 	c := pb.NewDummyServiceClient(conn)
 
-	ticker := time.NewTicker(5 * time.Second)
+    tickerSeconds := (1 / *requestsPerSecond)
+    tickerMicros := int64(tickerSeconds * 1e6)
+	ticker := time.NewTicker(time.Microsecond * time.Duration(tickerMicros))
 	defer ticker.Stop()
 	ctx := context.Background()
 	for {
@@ -55,7 +58,6 @@ func main() {
 		if err != nil {
 			log.Fatalf("could not do something: %v", err)
 		}
-		log.Printf("did something")
         statsdClient.Count("request", 1, []string{}, 1.0)
 	}
 }

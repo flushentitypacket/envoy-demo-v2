@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: apps/client/Dockerfile
+    command:
+      - "-requests_per_second=10"
     restart: on-failure:3
     depends_on:
       - server
@@ -17,7 +19,7 @@ services:
     # ports:
     #   - "50051:50051"
     deploy:
-      replicas: 2
+      replicas: 10
     depends_on:
       - dogstatsd
   dogstatsd:
