@@ -36,7 +36,7 @@ func main() {
 	conn, err := grpc.NewClient(
         *addr,
         grpc.WithTransportCredentials(insecure.NewCredentials()),
-        grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "round_robin": {} } ]}`),
+        grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "random": {} } ]}`),
         grpc.WithChainUnaryInterceptor(grpc_stats.UnaryClientInterceptor(statsdClient, tags)),
     )
 	if err != nil {
