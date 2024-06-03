@@ -5,7 +5,9 @@ import (
 	"dummy-grpc/lib/grpc_stats"
 	pb "dummy-grpc/lib/proto/dummy"
 	"flag"
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
@@ -25,11 +27,17 @@ func main() {
         log.Fatalf("failed to create statsd client: %v", err)
     }
 
+	hostname, err := os.Hostname()
+    if err != nil {
+        log.Fatalf("failed to retrieve hostname: %v", err)
+    }
+	tags := []string{fmt.Sprintf("hostname:%s", hostname)}
+
 	conn, err := grpc.NewClient(
         *addr,
         grpc.WithTransportCredentials(insecure.NewCredentials()),
         grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "round_robin": {} } ]}`),
-        grpc.WithChainUnaryInterceptor(grpc_stats.UnaryClientInterceptor(statsdClient)),
+        grpc.WithChainUnaryInterceptor(grpc_stats.UnaryClientInterceptor(statsdClient, tags)),
     )
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

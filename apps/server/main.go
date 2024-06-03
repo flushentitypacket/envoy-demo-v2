@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"google.golang.org/grpc"
@@ -30,8 +31,14 @@ func main() {
         log.Fatalf("failed to create statsd client: %v", err)
     }
 
+	hostname, err := os.Hostname()
+    if err != nil {
+        log.Fatalf("failed to retrieve hostname: %v", err)
+    }
+	tags := []string{fmt.Sprintf("hostname:%s", hostname)}
+
 	s := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(grpc_stats.UnaryServerInterceptor(statsdClient)),
+		grpc.ChainUnaryInterceptor(grpc_stats.UnaryServerInterceptor(statsdClient, tags)),
 	)
 	pb.RegisterDummyServiceServer(s, &service.Service{})
 
