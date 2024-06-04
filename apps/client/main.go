@@ -54,10 +54,14 @@ func main() {
 	for {
 		<-ticker.C
 
-		_, err = c.DoSomething(ctx, &pb.DoSomethingRequest{})
-		if err != nil {
-			log.Fatalf("could not do something: %v", err)
-		}
-        statsdClient.Count("request", 1, []string{}, 1.0)
+		go func() {
+			_, err = c.DoSomething(ctx, &pb.DoSomethingRequest{
+				OperationMillis: 10,
+			})
+			if err != nil {
+				log.Fatalf("could not do something: %v", err)
+			}
+			statsdClient.Count("request", 1, []string{}, 1.0)
+		}()
 	}
 }

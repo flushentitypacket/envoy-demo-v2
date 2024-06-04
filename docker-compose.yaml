@@ -12,19 +12,34 @@ services:
       - dogstatsd
     deploy:
       replicas: 1
-  server:
+    networks:
+      - default
+  server: &server
     build:
       context: .
       dockerfile: apps/server/Dockerfile
-    command:
-      - "-add_latency_millis=1000"
     # ports:
     #   - "50051:50051"
     deploy:
       replicas: 10
     depends_on:
       - dogstatsd
+    networks:
+      - default
+      - backend
+  slow_server:
+    <<: *server
+    command:
+      - "-add_latency_millis=10"
+    deploy:
+      replicas: 1
   dogstatsd:
     image: datadog/dogstatsd:latest
     env_file:
       - .env
+    networks:
+      - default
+
+networks:
+  backend:
+    driver: bridge
