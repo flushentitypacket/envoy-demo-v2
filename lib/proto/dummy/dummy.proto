@@ -8,6 +8,7 @@ service DummyService {
 }
 
 message DoSomethingRequest {
+  int64 operationMillis = 1;
 }
 
 message DoSomethingResponse {

@@ -13,4 +13,4 @@ RUN go build -o /server ./apps/server
 
 EXPOSE 50051
 
-CMD ["/server"]
+ENTRYPOINT ["/server"]

@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"google.golang.org/grpc"
@@ -17,6 +18,7 @@ import (
 
 var (
 	port = flag.Int("port", 50051, "The server port")
+	addLatencyMillis = flag.Int("add_latency_millis", 100, "additional delay on all requests in milliseconds")
 )
 
 func main() {
@@ -40,7 +42,7 @@ func main() {
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(grpc_stats.UnaryServerInterceptor(statsdClient, tags)),
 	)
-	pb.RegisterDummyServiceServer(s, &service.Service{})
+	pb.RegisterDummyServiceServer(s, service.NewService(time.Duration(*addLatencyMillis) * time.Millisecond))
 
 	reflection.Register(s)
 
