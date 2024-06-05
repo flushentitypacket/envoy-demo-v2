@@ -18,6 +18,7 @@ import (
 var (
 	addr = flag.String("addr", "server:50051", "the address to connect to")
     requestsPerSecond = flag.Float64("requests_per_second", 1.0, "the number of requests per second")
+    operationMillis = flag.Int64("operation_millis", 10, "how long each requested operation should take in milliseconds")
 )
 
 func main() {
@@ -37,7 +38,7 @@ func main() {
 	conn, err := grpc.NewClient(
         *addr,
         grpc.WithTransportCredentials(insecure.NewCredentials()),
-        grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "random": {} } ]}`),
+        grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "round_robin": {} } ]}`),
         grpc.WithChainUnaryInterceptor(grpc_stats.UnaryClientInterceptor(statsdClient, tags)),
     )
 	if err != nil {
@@ -56,7 +57,7 @@ func main() {
 
 		go func() {
 			_, err = c.DoSomething(ctx, &pb.DoSomethingRequest{
-				OperationMillis: 10,
+				OperationMillis: *operationMillis,
 			})
 			if err != nil {
 				log.Fatalf("could not do something: %v", err)

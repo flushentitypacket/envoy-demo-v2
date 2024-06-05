@@ -13,8 +13,14 @@ type Service struct {
 
 func (s *Service) DoSomething(ctx context.Context, in *pb.DoSomethingRequest) (*pb.DoSomethingResponse, error) {
 	requestOpLatency := time.Duration(in.GetOperationMillis()) * time.Millisecond
-	time.Sleep(requestOpLatency + s.additionalLatency)
-	return &pb.DoSomethingResponse{}, nil
+	timer := time.NewTimer(requestOpLatency + s.additionalLatency)
+	for {
+		select {
+		case <-timer.C:
+			return &pb.DoSomethingResponse{}, nil
+		default:
+		}
+	}
 }
 
 func NewService(additionalLatency time.Duration) *Service {
