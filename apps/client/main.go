@@ -52,6 +52,7 @@ func main() {
 	ticker := time.NewTicker(time.Microsecond * time.Duration(tickerMicros))
 	defer ticker.Stop()
 	ctx := context.Background()
+	log.Printf("client sending requests to %s at %f requests per second", *addr, *requestsPerSecond)
 	for {
 		<-ticker.C
 
@@ -60,7 +61,7 @@ func main() {
 				OperationMillis: *operationMillis,
 			})
 			if err != nil {
-				log.Fatalf("could not do something: %v", err)
+				log.Printf("could not do something: %v", err)
 			}
 			statsdClient.Count("request", 1, []string{}, 1.0)
 		}()
