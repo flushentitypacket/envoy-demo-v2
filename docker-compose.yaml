@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: apps/client/Dockerfile
     command:
-      - "-requests_per_second=10"
+      - "-requests_per_second=100"
       - "-addr=envoy:8080"
       - "-operation_millis=10"
     restart: on-failure:3
@@ -15,7 +15,7 @@ services:
   envoy:
     image: envoyproxy/envoy-dev:latest
     deploy:
-      replicas: 10
+      replicas: 2
     volumes:
       - ./apps/client/envoy.yaml:/etc/envoy/envoy.yaml
     ports:
@@ -27,21 +27,23 @@ services:
     # ports:
     #   - "50051:50051"
     deploy:
-      replicas: 6
+      replicas: 9
+      resources:
+        limits:
+          cpus: "0.02"
+          memory: "50M"
+    depends_on:
+      - dogstatsd
+  slow_server:
+    <<: *server
+    # command:
+    #   - "-add_latency_millis=10"
+    deploy:
+      replicas: 1
       resources:
         limits:
           cpus: "0.01"
           memory: "50M"
-    depends_on:
-      - dogstatsd
-  # slow_server:
-  #   <<: *server
-  #   command:
-  #     - "-add_latency_millis=1"
-  #   deploy:
-  #     replicas: 1
-  #   extends:
-  #     service: server
   dogstatsd:
     image: datadog/dogstatsd:latest
     env_file:

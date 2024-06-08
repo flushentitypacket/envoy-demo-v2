@@ -41,6 +41,7 @@ func main() {
 
 	s := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(grpc_stats.UnaryServerInterceptor(statsdClient, tags)),
+		grpc.MaxConcurrentStreams(0),
 	)
 	pb.RegisterDummyServiceServer(s, service.NewService(time.Duration(*addLatencyMillis) * time.Millisecond))
 
