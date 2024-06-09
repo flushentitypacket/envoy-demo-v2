@@ -43,7 +43,8 @@ static_resources:
         "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
         explicit_http_config:
           http2_protocol_options: {}
-    lb_policy: ROUND_ROBIN
+    # OVERRIDE ME
+    lb_policy: RANDOM
     load_assignment:
       cluster_name: echo_service
       endpoints:
@@ -53,6 +54,7 @@ static_resources:
                 socket_address:
                   address: server
                   port_value: 50051
+          # UNCOMMENT FOR ADDING SLOW SERVER
           - endpoint:
               address:
                 socket_address:

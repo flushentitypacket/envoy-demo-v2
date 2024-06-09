@@ -17,7 +17,7 @@ services:
     deploy:
       replicas: 2
     volumes:
-      - ./apps/client/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
     ports:
       - "9901-9999:9901"
   server: &server
