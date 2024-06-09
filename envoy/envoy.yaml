@@ -55,11 +55,11 @@ static_resources:
                   address: server
                   port_value: 50051
           # UNCOMMENT FOR ADDING SLOW SERVER
-          - endpoint:
-              address:
-                socket_address:
-                  address: slow_server
-                  port_value: 50051
+          # - endpoint:
+          #     address:
+          #       socket_address:
+          #         address: slow_server
+          #         port_value: 50051
     outlier_detection:
       enforcing_consecutive_5xx: 0
       enforcing_success_rate: 0

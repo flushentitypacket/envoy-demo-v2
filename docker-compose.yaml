@@ -24,8 +24,6 @@ services:
     build:
       context: .
       dockerfile: apps/server/Dockerfile
-    # ports:
-    #   - "50051:50051"
     deploy:
       replicas: 9
       resources:
@@ -34,16 +32,14 @@ services:
           memory: "50M"
     depends_on:
       - dogstatsd
-  slow_server:
-    <<: *server
-    # command:
-    #   - "-add_latency_millis=10"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.01"
-          memory: "50M"
+  # slow_server:
+  #   <<: *server
+  #   deploy:
+  #     replicas: 1
+  #     resources:
+  #       limits:
+  #         cpus: "0.01"
+  #         memory: "50M"
   dogstatsd:
     image: datadog/dogstatsd:latest
     env_file:
