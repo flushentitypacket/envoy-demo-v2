@@ -15,7 +15,7 @@ services:
   envoy:
     image: envoyproxy/envoy-dev:latest
     deploy:
-      replicas: 2
+      replicas: 1
     volumes:
       - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
     ports:
@@ -26,10 +26,10 @@ services:
       dockerfile: apps/server/Dockerfile
     deploy:
       replicas: 9
-      resources:
-        limits:
-          cpus: "0.02"
-          memory: "50M"
+      # resources:
+      #   limits:
+      #     cpus: "0.02"
+      #     memory: "50M"
     depends_on:
       - dogstatsd
   # slow_server:
