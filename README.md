@@ -1,4 +1,11 @@
-# envoy-demo-v2
+# Envoy load balancer demo
+
+Demo project built on docker compose, featuring:
+
+- grpc client as load generator (Go)
+- Envoy
+- grpc server (Go)
+- dogstatsd
 
 ## Setup
 
